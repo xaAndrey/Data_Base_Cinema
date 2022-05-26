@@ -131,6 +131,8 @@ INNER JOIN spectators spc
 ON spc.id = sts.spectator_id
 WHERE ses.session_date_time = '2022-04-08 10:30:00';
 
+
+
 -- ЗАПРОСЫ UPDATE --
 -- #12 ОБновим названия фильма, в которых букву "o" заменим на "A" -- 
 UPDATE movies
@@ -163,6 +165,8 @@ UPDATE movies
 	SET `name` = "Unknow"
     WHERE `name` = "Dog";
 -- SET SQL_SAFE_UPDATES = 1; 
+
+
 
 -- ЗАПРОСЫ DELETE --
 -- Создадим 5 некоректных данных --
@@ -205,6 +209,8 @@ WHERE `name` = "TEST";
 DELETE FROM spectators 
 WHERE full_name = "TEST";
 -- SET SQL_SAFE_UPDATES = 1; 
+
+
 
 -- ЗАПРОСЫ С SELECT И ДРУГИМИ КОНСТРУКЦИЯМИ --
 -- #22 Найти все фильмы, которые выпускались в 2021 году или в 2020 --
@@ -283,3 +289,100 @@ WHERE release_date = "2022-04-08";
 SELECT `number`
 FROM cinema_halls
 WHERE MOD(`number`, 2) = 0;
+
+
+
+-- ЗАПРОСЫ С LIKE И ДРУГАЯ РАБОТА СО СТРОКАМИ --
+-- #37 Найти кинотеатры, в которых есть искомая последовательность букв (Например tar) --
+SELECT `name`
+ FROM cinemas
+ WHERE `name` LIKE '%tar%';
+
+-- #38 Найти имена актёров, которые начинаются на "R" --
+SELECT full_name
+FROM actors
+WHERE full_name LIKE 'R%';
+
+-- #39 Найти имена режисеров, чьи имя и фамилия начинаются на "P" --
+SELECT full_name
+FROM producers
+WHERE full_name LIKE 'P%';
+
+-- #40 Вывести только первые 3 буквы фильма --
+SELECT SUBSTRING(`name`, 1, 3)
+FROM movies;
+
+-- #41 Вывести имена фильмов заглавными буквами --
+SELECT UPPER(`name`)
+FROM movies;
+
+-- #42 Вывести имена фильмов строчными буквами --
+SELECT LOWER(`name`)
+FROM movies;
+
+-- #43 Объеденить названия фильма и его студии в одну строку -- 
+SELECT CONCAT(`name`, '||', name_studio)
+FROM movies;
+
+-- #44 Перевернуть строку адреса наоборот --
+SELECT REVERSE(adress)
+FROM cinemas;
+
+
+
+-- SELECT INTO 
+-- #45 Создать бэкап таблицы --
+CREATE TABLE genresBackup26052022 (
+id int not null auto_increment,
+primary key(id),
+`name` varchar(45) not null
+);
+
+INSERT INTO genresBackup26052022 
+SELECT * 
+FROM genres;
+
+DROP TABLE genresBackup26052022;
+
+-- #46 Создать таблицу с определёнными столбцами --
+CREATE TABLE copy_of_spectators (
+id int not null auto_increment,
+primary key(id),
+`name` varchar(45) not null
+);
+
+INSERT INTO copy_of_spectators (id, `name`)
+SELECT id, full_name
+FROM spectators;
+
+DROP TABLE copy_of_spectators;
+
+-- #47 Создать таблицу мужчин зрителей --
+CREATE TABLE male_spectators (
+id int not null auto_increment,
+primary key(id),
+`name` varchar(45) not null
+);
+
+INSERT INTO male_spectators (id, `name`)
+SELECT id, full_name
+FROM spectators
+WHERE gender = 'male';
+
+DROP TABLE male_spectators;
+
+-- #48 Создать таблицу женьщин зрителей старше 20 лет
+CREATE TABLE female_spectators (
+id INT NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(id),
+`name` VARCHAR(45) NOT NULL,
+age INT NOT NULL
+);
+
+INSERT INTO female_spectators (id, `name`, age)
+SELECT id, full_name, age
+FROM spectators
+WHERE gender = 'female' 
+AND age > 20;
+
+DROP TABLE female_spectators;
